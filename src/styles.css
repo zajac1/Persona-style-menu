@@ -49,7 +49,7 @@ body,
 }
 
 html {
-  background-image: url("./src/assets/bckg.jpg");
+  background-image: url("./assets/bckg.jpg");
   background-size: cover;
   background-repeat: no-repeat;
   overflow: hidden;

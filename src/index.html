@@ -3,7 +3,7 @@
   <head>
     <title>Video game menu concept</title>
     <meta charset="UTF-8" />
-    <link href="src/styles.css" rel="stylesheet" />
+    <link href="styles.css" rel="stylesheet" />
     <script
       src="https://kit.fontawesome.com/a84687a4b4.js"
       crossorigin="anonymous"
@@ -13,7 +13,7 @@
   <body>
     <div class="overlay"></div>
     <video autoplay muted id="myVideo">
-      <source src="src/assets/bckg.webm" type="video/webm" />
+      <source src="assets/bckg.webm" type="video/webm" />
     </video>
 
     <div id="app">
@@ -23,12 +23,12 @@
     </div>
     <section class="audio-panel-wrapper">
       <audio loop>
-        <source src="src/assets/menu_music.mp3" />
+        <source src="assets/menu_music.mp3" />
       </audio>
       <i data-js="sound-icon" class="fa-solid fa-volume-xmark volume-icon"></i>
       <input type="range" min="0" max="100" value="0" class="volume-slider" />
     </section>
 
-    <script src="src/index.js"></script>
+    <script src="index.js"></script>
   </body>
 </html>
