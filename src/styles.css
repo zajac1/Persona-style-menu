@@ -178,26 +178,6 @@ video {
   padding-left: 12px;
 }
 
-.menu-list-item--selected:before {
-  font-size: 0.3em;
-  content: "";
-  color: var(--color-neutral-inverted);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  top: 0;
-  left: -8px;
-  width: 9px;
-  height: 12px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 6'%3E%3Cpath d='M4 1.27205L1.88889 3.01689L4 4.72796L3.68627 6L0 2.98311L3.66013 0L4 1.27205Z' fill='white'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 6'%3E%3Cpath d='M4 1.27205L1.88889 3.01689L4 4.72796L3.68627 6L0 2.98311L3.66013 0L4 1.27205Z' fill='white'/%3E%3C/svg%3E");
-  background-size: contain;
-  transform: translateY(100%);
-  background-position: center, 5px 0;
-  background-repeat: no-repeat;
-}
-
 .menu-list-item--selected:focus-visible {
   outline: none;
 }
@@ -237,7 +217,7 @@ video {
   background: transparent;
   margin: 0;
   width: 0;
-  /* transition: width cubic-bezier(0.16, 1, 0.3, 1) 0.2s; */
+  transition: width cubic-bezier(0.16, 1, 0.3, 1) 0.2s;
 }
 
 .volume-slider--active {

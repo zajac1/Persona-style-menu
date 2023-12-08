@@ -22,39 +22,39 @@ const audio = $(".audio-panel-wrapper audio");
 const volumeIcon = $(".volume-icon");
 
 const activeMenuItem = createStateSlice({
-  key: "activeMenuItem",
-  initialValue: null,
-  additionalMethods: {
-    makeEmpty: ({ set }) => () => set(null),
-    isEqualTo: ({ get }) => (node) => {
-      const currentMenuItem = get();
-      if (!currentMenuItem) {
-        return false;
-      }
+    key: "activeMenuItem",
+    initialValue: null,
+    additionalMethods: {
+        makeEmpty: ({ set }) => () => set(null),
+        isEqualTo: ({ get }) => (node) => {
+            const currentMenuItem = get();
+            if (!currentMenuItem) {
+                return false;
+            }
 
-      return currentMenuItem.isSameNode(node);
+            return currentMenuItem.isSameNode(node);
+        }
     }
-  }
 });
 
 const selectedIndex = createStateSlice({
-  key: "selectedIndex",
-  initialValue: null,
-  additionalMethods: {
-    checkIfEmpty: ({ get }) => () => get() === null,
-    makeEmpty: ({ set }) => () => set(null)
-  }
+    key: "selectedIndex",
+    initialValue: null,
+    additionalMethods: {
+        checkIfEmpty: ({ get }) => () => get() === null,
+        makeEmpty: ({ set }) => () => set(null)
+    }
 });
 
 const colorActive = getComputedStyle(document.documentElement).getPropertyValue(
-  "--color-active"
+    "--color-active"
 );
 
 entries.forEach(({ text, subtext }, index) => {
-  const svgIndex = index + 1;
-  const randomSeed = Math.floor(Math.random() * 100) + 1;
+    const svgIndex = index + 1;
+    const randomSeed = Math.floor(Math.random() * 100) + 1;
 
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520">
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520">
   <defs>
     <filter id="displacement-${svgIndex}" height="200%" width="200%" x="-50%" y="-50%">
       <feTurbulence baseFrequency="0.033" numOctaves="5" result="NOISE" seed="${randomSeed}"/>
@@ -63,11 +63,11 @@ entries.forEach(({ text, subtext }, index) => {
   </defs>
    
   <g filter="url(#displacement-${svgIndex})">
-    <rect width="50%" height="15%" fill="${colorActive}" />
+    <rect width="50%" height="15%" stroke="#333" stroke-width="2" fill="${colorActive}" />
   </g>
 </svg>`;
 
-  listContainer.innerHTML += `
+    listContainer.innerHTML += `
     <li 
       class="menu-list-item menu-list-item--initial" 
       tabindex=${index} 
@@ -80,8 +80,8 @@ entries.forEach(({ text, subtext }, index) => {
       <div 
         class="menu-list-item--background" 
         style='background-image: url("data:image/svg+xml, ${encodeURIComponent(
-          svg
-        )}")'>
+        svg
+    )}")'>
       </div>
     </li>
   `;
@@ -90,189 +90,192 @@ entries.forEach(({ text, subtext }, index) => {
 const listItems = $$(".menu-list-item");
 
 listItems.forEach((menuItem) => {
-  const { index } = menuItem.dataset;
-  menuItem.style.setProperty(
-    "--angle",
-    `${(CIRLCE_TOTAL_ANGLE / listItems.length) * index}deg`
-  );
+    const { index } = menuItem.dataset;
+    menuItem.style.setProperty(
+        "--angle",
+        `${(CIRLCE_TOTAL_ANGLE / listItems.length) * index}deg`
+    );
 });
 
 const [itemActivatedEvent, itemActivatedHandler] = createEventEmitter(
-  "menu-item-activated",
-  listContainer
+    "menu-item-activated",
+    listContainer
 );
 
 const [itemDeactivatedEvent, itemDeactivatedHandler] = createEventEmitter(
-  "menu-item-deactivated",
-  listContainer
+    "menu-item-deactivated",
+    listContainer
 );
 
 const [itemSelectedEvent, itemSelectedHandler] = createEventEmitter(
-  "menu-item-selected",
-  body
+    "menu-item-selected",
+    body
 );
 
 listContainer
-  .on("click", ({ target }) => {
-    const { dataset } = target;
-    if (dataset.js === "menu-item") {
-      const isMenuItemActivated = activeMenuItem.isEqualTo(target);
-      const eventToDispatch = isMenuItemActivated
-        ? itemDeactivatedEvent
-        : itemActivatedEvent;
+    .on("click", ({ target }) => {
+        const { dataset } = target;
+        if (dataset.js === "menu-item") {
+            const isMenuItemActivated = activeMenuItem.isEqualTo(target);
+            const eventToDispatch = isMenuItemActivated
+                ? itemDeactivatedEvent
+                : itemActivatedEvent;
 
-      if (!isMenuItemActivated) {
-        activeMenuItem.set(target);
-      }
-      target.dispatchEvent(eventToDispatch);
-      return;
-    }
-  })
-  .on("mouseover", ({ target }) => {
-    const { dataset } = target;
-    if (dataset.js === "menu-item") {
-      selectedIndex.set(Number(dataset.index));
-      target.dispatchEvent(itemSelectedEvent);
-    }
-  });
+            if (!isMenuItemActivated) {
+                activeMenuItem.set(target);
+            }
+            target.dispatchEvent(eventToDispatch);
+            return;
+        }
+    })
+    .on("mouseover", ({ target }) => {
+        const { dataset } = target;
+        if (dataset.js === "menu-item") {
+            selectedIndex.set(Number(dataset.index));
+            target.dispatchEvent(itemSelectedEvent);
+        }
+    });
 
 audioPanelWrapper.on("click", ({ target }) => {
-  const { dataset } = target;
-  if (dataset.js === "sound-icon") {
-    audioPanelWrapper.classList.toggle("audio-panel-wrapper--revelead");
-    volumeSlider.classList.toggle("volume-slider--active");
-    return;
-  }
+    const { dataset } = target;
+    if (dataset.js === "sound-icon") {
+        audioPanelWrapper.classList.toggle("audio-panel-wrapper--revelead");
+        volumeSlider.classList.toggle("volume-slider--active");
+        return;
+    }
 
-  if (!target.isEqualNode(volumeSlider)) {
-    audioPanelWrapper.classList.remove("audio-panel-wrapper--revelead");
-    volumeSlider.classList.remove("volume-slider--active");
-  }
+    if (!target.isEqualNode(volumeSlider)) {
+        audioPanelWrapper.classList.remove("audio-panel-wrapper--revelead");
+        volumeSlider.classList.remove("volume-slider--active");
+    }
 });
 
 body.on("keydown", (event) => {
-  const { code } = event;
-  if (!ALLOWED_NAVIGATIONS_KEYS.includes(code)) {
-    return;
-  }
+    const { code } = event;
 
-  if (code === "Escape") {
-    const { target } = event;
-    if (!activeMenuItem.get()) {
-      return;
+    if (!ALLOWED_NAVIGATIONS_KEYS.includes(code)) {
+        return;
     }
-    target.dispatchEvent(itemDeactivatedEvent);
-    return;
-  }
 
-  if (code === "Enter") {
-    const { target } = event;
-    const isMenuItemActivated = activeMenuItem.isEqualTo(target);
-
-    if (!isMenuItemActivated) {
-      activeMenuItem.set(target);
-      target.dispatchEvent(itemActivatedEvent);
+    if (code !== "Escape" && activeMenuItem.get()) {
+        return;
     }
-    return;
-  }
 
-  if (code === "ArrowDown") {
-    if (selectedIndex.checkIfEmpty()) {
-      selectedIndex.set(0);
-    } else {
-      selectedIndex.set((selectedIndex.get() + 1) % listItems.length);
+    if (code === "Escape" && !activeMenuItem.get()) {
+        return;
     }
-    event.target.dispatchEvent(itemSelectedEvent);
-    return;
-  }
 
-  if (code === "ArrowUp") {
-    if (selectedIndex.checkIfEmpty()) {
-      selectedIndex.set(listItems.length - 1);
-    } else {
-      selectedIndex.set(
-        (selectedIndex.get() - 1 + listItems.length) % listItems.length
-      );
+    if (code === "Escape") {
+        const { target } = event;
+        target.dispatchEvent(itemDeactivatedEvent);
+        return;
     }
-    event.target.dispatchEvent(itemSelectedEvent);
-    return;
-  }
+
+
+    if (code === "Enter") {
+        const { target } = event;
+        const isMenuItemActivated = activeMenuItem.isEqualTo(target);
+
+        if (!isMenuItemActivated) {
+            activeMenuItem.set(target);
+            target.dispatchEvent(itemActivatedEvent);
+        }
+        return;
+    }
+
+    if (code === "ArrowDown") {
+        if (selectedIndex.checkIfEmpty()) {
+            selectedIndex.set(0);
+        } else {
+            selectedIndex.set((selectedIndex.get() + 1) % listItems.length);
+        }
+        event.target.dispatchEvent(itemSelectedEvent);
+        return;
+    }
+
+    if (code === "ArrowUp") {
+        if (selectedIndex.checkIfEmpty()) {
+            selectedIndex.set(listItems.length - 1);
+        } else {
+            selectedIndex.set(
+                (selectedIndex.get() - 1 + listItems.length) % listItems.length
+            );
+        }
+        event.target.dispatchEvent(itemSelectedEvent);
+        return;
+    }
 });
 
 let hasAudioBeenInitialised = false;
 volumeSlider.on("input", (e) => {
-  const volumeValue = Number(e.currentTarget.value);
-  if (!hasAudioBeenInitialised) {
-    audio.play();
-    hasAudioBeenInitialised = true;
-  }
-  volumeSlider.style.setProperty(
-    "--thumb-rotation",
-    `${e.currentTarget.value * 0.6}`
-  );
-  audio.volume = volumeValue / 100;
+    const volumeValue = Number(e.currentTarget.value);
+    if (!hasAudioBeenInitialised) {
+        audio.play();
+        hasAudioBeenInitialised = true;
+    }
+    audio.volume = volumeValue / 100;
 
-  volumeIcon.className = clx("fa-solid", "volume-icon", {
-    "fa-volume-xmark": volumeValue === 0,
-    "fa-volume-low": volumeValue > 0 && volumeValue < 70,
-    "fa-volume-high": volumeValue >= 70
-  });
+    volumeIcon.className = clx("fa-solid", "volume-icon", {
+        "fa-volume-xmark": volumeValue === 0,
+        "fa-volume-low": volumeValue > 0 && volumeValue < 70,
+        "fa-volume-high": volumeValue >= 70
+    });
 });
 
 volumeIcon.on("click", () => {
-  const currentVolumeValue = Number(volumeSlider.value);
-  const isAudioMuted = currentVolumeValue === 0;
+    const currentVolumeValue = Number(volumeSlider.value);
+    const isAudioMuted = currentVolumeValue === 0;
 
-  volumeSlider.value = isAudioMuted ? 40 : 0;
-  volumeSlider.dispatchEvent(new Event("input"));
+    volumeSlider.value = isAudioMuted ? 40 : 0;
+    volumeSlider.dispatchEvent(new Event("input"));
 });
 
 itemActivatedHandler(() => {
-  const activatedMenuItem = activeMenuItem.get();
+    const activatedMenuItem = activeMenuItem.get();
 
-  listItems.forEach((listElement) => {
-    listElement.tabIndex = -1;
-  });
+    listItems.forEach((listElement) => {
+        listElement.tabIndex = -1;
+    });
 
-  activatedMenuItem.tabIndex = 0;
+    activatedMenuItem.tabIndex = 0;
 
-  activatedMenuItem.classList.replace(
-    "menu-list-item",
-    "menu-list-item--selected"
-  );
+    activatedMenuItem.classList.replace(
+        "menu-list-item",
+        "menu-list-item--selected"
+    );
 });
 
 itemDeactivatedHandler(() => {
-  const activatedMenuItem = activeMenuItem.get();
-  activatedMenuItem.classList.replace(
-    "menu-list-item--selected",
-    "menu-list-item"
-  );
-  listItems.forEach((listElement, index) => {
-    listElement.tabIndex = index;
-  });
-  activeMenuItem.makeEmpty();
+    const activatedMenuItem = activeMenuItem.get();
+    activatedMenuItem.classList.replace(
+        "menu-list-item--selected",
+        "menu-list-item"
+    );
+    listItems.forEach((listElement, index) => {
+        listElement.tabIndex = index;
+    });
+    activeMenuItem.makeEmpty();
 });
 
 itemSelectedHandler(() => {
-  const itemIndex = selectedIndex.get();
-  const menuSound = new Audio("src/assets/menu_item_choice.wav");
-  menuSound.volume = 0.4;
-  listItems[itemIndex].focus();
-  menuSound.play();
+    const itemIndex = selectedIndex.get();
+    const menuSound = new Audio("src/assets/menu_item_choice.wav");
+    menuSound.volume = 0.4;
+    listItems[itemIndex].focus();
+    menuSound.play();
 });
 
-video.on("timeupdate", function ({ target }) {
-  if (target.currentTime >= target.duration - 1) {
-    target.currentTime = 1;
-    target.play();
-  }
+video.on("timeupdate", function({ target }) {
+    if (target.currentTime >= target.duration - 1) {
+        target.currentTime = 1;
+        target.play();
+    }
 });
 
-document.fonts.onloadingdone = function (fontFaceSetEvent) {
-  if (fontFaceSetEvent.fontfaces.length) {
-    listItems.forEach((listElement) => {
-      listElement.classList.remove("menu-list-item--initial");
-    });
-  }
+document.fonts.onloadingdone = function(fontFaceSetEvent) {
+    if (fontFaceSetEvent.fontfaces.length) {
+        listItems.forEach((listElement) => {
+            listElement.classList.remove("menu-list-item--initial");
+        });
+    }
 };
