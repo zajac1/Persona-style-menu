@@ -216,7 +216,7 @@ video {
 }
 
 .audio-panel-wrapper--revelead {
-  right: 84px;
+  right: 12px;
 }
 
 .volume-icon {
@@ -237,13 +237,12 @@ video {
   background: transparent;
   margin: 0;
   width: 0;
-  transition: width cubic-bezier(0.16, 1, 0.3, 1) 0.2s;
+  /* transition: width cubic-bezier(0.16, 1, 0.3, 1) 0.2s; */
 }
 
 .volume-slider--active {
-  width: 200px;
-  height: 24px;
-  transform: rotateY(-25deg);
+  width: 170px;
+  height: 32px;
 }
 .volume-slider:focus {
   outline: none;
@@ -255,13 +254,12 @@ video {
 
 .volume-slider--active::-webkit-slider-thumb {
   background-color: var(--color-neutral-inverted);
-  width: 32px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  transform: translateX(calc(var(--thumb-rotation) * 0.15px))
-    rotateY(calc(var(--thumb-rotation) * 1deg));
 }
 
 .volume-slider--active::-webkit-slider-runnable-track {
   background-color: var(--color-active);
+  padding: 1px 0;
 }
