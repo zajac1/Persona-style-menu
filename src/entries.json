@@ -1,11 +1,11 @@
 [
-  { "text": "followers", "subtext": "" },
-  { "text": "equipment", "subtext": "" },
-  { "text": "calendar", "subtext": "" },
-  { "text": "journal", "subtext": "make ready" },
+  { "text": "team", "subtext": "" },
+  { "text": "gear", "subtext": "" },
+  { "text": "diary", "subtext": "make ready" },
+  { "text": "plan", "subtext": "" },
   { "text": "system", "subtext": "" },
-  { "text": "skill", "subtext": "" },
+  { "text": "skills", "subtext": "" },
   { "text": "quest", "subtext": "" },
   { "text": "party", "subtext": "" },
-  { "text": "item", "subtext": "" }
+  { "text": "items", "subtext": "" }
 ]

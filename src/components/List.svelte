@@ -6,6 +6,7 @@
 
   let listItems = [];
   let selectedItem;
+
   const setSelectedItem = (element) => (selectedItem = element);
   const resetSelectedItem = () => (selectedItem = null);
 
@@ -49,7 +50,7 @@
   export let isInitialized;
 </script>
 
-<ul class="menu-list js-menu-list">
+<ul class="menu-list">
   {#each entries as { text, subtext }, index}
     {@const svgIndex = index + 1}
     {@const svgDataURI = createBackgroundSvg(svgIndex)}
@@ -58,9 +59,9 @@
 
     <li
       bind:this={listItems[index]}
-      class:menu-list-item={!currentItem?.isEqualNode(selectedItem)}
-      class:menu-list-item--selected={currentItem?.isEqualNode(selectedItem)}
-      class:menu-list-item--initial={!isInitialized}
+      class:item={!currentItem?.isEqualNode(selectedItem)}
+      class:item-selected={currentItem?.isEqualNode(selectedItem)}
+      class:item-initial={!isInitialized}
       style:--index={index}
       style:--angle="{degreesPerItem}deg"
       data-subtext={subtext}
@@ -69,9 +70,9 @@
       on:mouseover={onActiveItemChange}
       on:focus={onFocus}
     >
-      <div class="menu-list-item--content">{text}</div>
+      <div class="item--content">{text}</div>
       <div
-        class="menu-list-item--background"
+        class="item-background"
         style:background-image="url('{svgDataURI}')"
       ></div>
     </li>
@@ -80,6 +81,9 @@
 
 <style>
   .menu-list {
+    --default-rotation: 8deg;
+    --default-easing-function: cubic-bezier(0.16, 1, 0.3, 1);
+
     font-size: var(--menu-size);
     text-transform: uppercase;
     list-style-type: none;
@@ -90,54 +94,68 @@
     margin-left: 20vw;
   }
 
-  .menu-list-item {
-    transform: rotateY(8deg) translateZ(var(--translation-z-axis))
-      translateX(calc(var(--radius) + (var(--radius) * sin(var(--angle))) * -1));
+
+  .item {
+    --default-horizontal-tilt: calc(
+      var(--radius) + (var(--radius) * sin(var(--angle))) * -1
+    );
+
+    rotate: y var(--default-rotation);
+    translate: 0 0 var(--translation-z-axis);
+    transform: translateX(
+      calc(var(--radius) + (var(--radius) * sin(var(--angle))) * -1)
+    );
     text-align: right;
     line-height: 65%;
     letter-spacing: -4px;
     cursor: pointer;
     color: var(--color-neutral-inverted);
-    transition: transform cubic-bezier(0.16, 1, 0.3, 1) 0.2s;
+    transition: all var(--default-easing-function) 0.2s;
     position: relative;
+    min-width: 250px;
   }
 
-  .menu-list-item--initial {
-    transform: rotateY(8deg) translateZ(var(--translation-z-axis))
-      translateX(
-        calc(var(--radius) + (var(--radius) * sin(var(--angle))) * -1 + 300px)
-      );
+  .item-initial {
+    transform: translateX(
+      calc(var(--radius) + (var(--radius) * sin(var(--angle))) * -1 + 300px)
+    );
   }
 
-  .menu-list:has(.menu-list-item--selected)
-    .menu-list-item:not(.menu-list-item--selected) {
-    transition: all cubic-bezier(0.16, 1, 0.3, 1) 2s;
-    transform: rotateY(8deg) translateZ(var(--translation-z-axis))
-      translateX(
-        calc(var(--radius) + (var(--radius) * sin(var(--angle))) * -1 - 900px)
-      );
-  }
-
-  .menu-list-item:focus {
+  .item-selected {
+    rotate: y 0deg;
+    translate: -20% calc(var(--index) * -100% + 24px)
+      calc(var(--translation-z-axis) + 10px);
     position: relative;
-    transform: rotateY(7deg) translateZ(calc(var(--translation-z-axis) + 3px))
-      translateX(calc(var(--radius) + (var(--radius) * sin(var(--angle))) * -1));
     z-index: 1;
-    animation: tiltAnimation 3s infinite linear;
+    animation: tiltSelected 3s infinite linear;
+    text-align: right;
+    line-height: 65%;
+    letter-spacing: -4px;
+    transition: all var(--default-easing-function) 0.2s;
+    cursor: pointer;
+    padding-left: 12px;
   }
 
-  .menu-list-item:focus-visible {
+  .menu-list:has(.item-selected) .item:not(.item-selected) {
+    pointer-events: none; /* for a bug where after clicking accidentaly because of animation with hover we could invoke activate item*/
+    transition: all var(--default-easing-function) 2s;
+    transform: translateX(
+      calc(var(--radius) + (var(--radius) * sin(var(--angle))) * -1 - 900px)
+    );
+  }
+
+  .item:focus-visible {
     outline: none;
   }
 
-  .menu-list-item--content {
+  .item--content {
     width: min-content;
     margin-left: auto;
     pointer-events: none;
   }
 
-  .menu-list-item:focus .menu-list-item--background,
-  .menu-list-item--selected .menu-list-item--background {
+  .item:focus .item-background,
+  .item-selected .item-background {
     background-repeat: no-repeat;
     background-size: cover;
     width: 215%;
@@ -149,34 +167,61 @@
     pointer-events: none;
   }
 
-  .menu-list-item:focus {
-    animation: tiltAnimation 3s infinite linear;
-    transform: rotateY(7deg) translateZ(calc(var(--translation-z-axis) + 3px))
-      translateX(calc(var(--radius) + (var(--radius) * sin(var(--angle))) * -1));
+  .item:focus {
+    animation: tiltActive 4s infinite linear;
+    rotate: y calc(var(--default-rotation) - 1deg);
+    translate: 0 0 calc(var(--translation-z-axis) + 3px);
+    transform: translateX(
+      calc(var(--radius) + (var(--radius) * sin(var(--angle))) * -1)
+    );
     z-index: 1;
   }
 
-  .menu-list-item:focus .menu-list-item--content,
-  .menu-list-item--selected .menu-list-item--content {
+  .item:focus .item--content,
+  .item-selected .item--content {
     color: var(--color-neutral);
+    text-shadow:
+      1px -1px 0 var(--color-neutral-inverted),
+      -3px 1px 0 var(--color-neutral-inverted),
+      3px 3px 0 var(--color-neutral-inverted),
+      0 -3px 0 var(--color-neutral-inverted);
   }
 
-  .menu-list-item--selected {
-    transform: rotateY(0deg) translateX(15%)
-      translateY(calc(var(--index) * -100% + 24px))
-      translateZ(calc(var(--translation-z-axis) + 10px));
-    position: relative;
-    z-index: 1;
-    animation: tiltAnimation 3s infinite linear;
-    text-align: right;
-    line-height: 65%;
-    letter-spacing: -4px;
-    transition: transform cubic-bezier(0.16, 1, 0.3, 1) 0.2s;
-    cursor: pointer;
-    padding-left: 12px;
-  }
-
-  .menu-list-item--selected:focus-visible {
+  .item-selected:focus-visible {
     outline: none;
+  }
+
+  @keyframes tiltActive {
+    0%,
+    100% {
+      transform: translateX(calc(var(--default-horizontal-tilt) + 3px))
+        translateY(0);
+    }
+    25% {
+      transform: translateX(var(--default-horizontal-tilt)) translateY(3px);
+    }
+    50% {
+      transform: translateX(calc(var(--default-horizontal-tilt) - 3px))
+        translateY(0);
+    }
+    75% {
+      transform: translateX(var(--default-horizontal-tilt)) translateY(-3px);
+    }
+  }
+
+  @keyframes tiltSelected {
+    0%,
+    100% {
+      transform: translateX(3px) translateY(0);
+    }
+    25% {
+      transform: translateX(0) translateY(3px);
+    }
+    50% {
+      transform: translateX(-3px) translateY(0);
+    }
+    75% {
+      transform: translateX(0) translateY(-3px);
+    }
   }
 </style>
