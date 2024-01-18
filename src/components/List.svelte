@@ -60,14 +60,15 @@
 
     <li
       bind:this={listItems[index]}
-      class:item={!isCurrentItemActive}
-      class:active={isCurrentItemActive}
+      class={isCurrentItemActive ? "active" : "default"}
       class:initial={!isInitialized}
       style:--index={index}
       style:--angle="{degreesPerItem}deg"
       data-subtext={subtext}
       tabindex={index}
-      on:click={isCurrentItemActive ? clearActiveItem : ({ target }) => setActiveItem(target)}
+      on:click={isCurrentItemActive
+        ? clearActiveItem
+        : ({ target }) => setActiveItem(target)}
       on:mouseover={onSelectedItemChange}
       on:focus={onFocus}
     >
@@ -86,6 +87,7 @@
 <style>
   .menu-list {
     --default-rotation: 8deg;
+    --default-delay: 20ms;
     --default-easing-function: cubic-bezier(0.16, 1, 0.3, 1);
 
     font-size: var(--menu-size);
@@ -98,24 +100,31 @@
     margin-left: 20vw;
   }
 
-  .item {
+  li {
     --default-horizontal-tilt: calc(
       var(--radius) + (var(--radius) * sin(var(--angle))) * -1
     );
 
-    rotate: y var(--default-rotation);
-    translate: 0 0 var(--translation-z-axis);
-    transform: translateX(var(--default-horizontal-tilt));
-    text-align: right;
     line-height: 65%;
     letter-spacing: -4px;
+    text-align: right;
     cursor: pointer;
-    color: var(--color-neutral-inverted);
+    position: relative;
+    min-width: 250px;
     transition:
       transform var(--default-easing-function) 0.2s,
       translate var(--default-easing-function) 0.2s;
-    position: relative;
-    min-width: 250px;
+  }
+
+  .default {
+    rotate: y var(--default-rotation);
+    translate: 0 0 var(--translation-z-axis);
+    transform: translateX(var(--default-horizontal-tilt));
+    color: var(--color-neutral-inverted);
+
+    &:not(:focus) {
+      transition-delay: calc(var(--index) * var(--default-delay)), 0ms; /* 0 so we won't delay translate animations */
+    }
 
     &.initial {
       transform: translateX(calc(var(--default-horizontal-tilt) + 300px));
@@ -126,7 +135,7 @@
     }
   }
 
-  .item:focus {
+  .default:focus {
     animation: tiltSelected 4s infinite linear;
     rotate: y calc(var(--default-rotation) - 1deg);
     translate: 0 0 calc(var(--translation-z-axis) + 3px);
@@ -140,16 +149,8 @@
     rotate: y 0deg;
     translate: -20% calc(var(--index) * -100% + 24px)
       calc(var(--translation-z-axis) + 10px);
-    position: relative;
     z-index: 1;
     animation: tiltActive 3s infinite linear;
-    text-align: right;
-    line-height: 65%;
-    letter-spacing: -4px;
-    transition:
-      transform var(--default-easing-function) 0.2s,
-      translate var(--default-easing-function) 0.2s;
-    cursor: pointer;
     padding-left: 12px;
 
     &:focus-visible {
@@ -176,7 +177,7 @@
     z-index: -1;
   }
 
-  .menu-list:has(.active) .item:not(.active) {
+  .menu-list:has(.active) li:not(.active) {
     pointer-events: none; /* for a bug where after clicking accidentaly because of animation with hover we could invoke activate item*/
     transition:
       transform var(--default-easing-function) 2s,
@@ -184,9 +185,10 @@
     transform: translateX(
       calc(var(--radius) + (var(--radius) * sin(var(--angle))) * -1 - 900px)
     );
+    transition-delay: calc(var(--index) * var(--default-delay));
   }
 
-  .item:focus .item-background,
+  li:focus .item-background,
   .active .item-background {
     background-repeat: no-repeat;
     background-size: cover;
@@ -199,12 +201,12 @@
     pointer-events: none;
   }
 
-  .item:focus .text-background,
+  li:focus .text-background,
   .active .text-background {
     display: block;
   }
 
-  .item:focus .content,
+  li:focus .content,
   .active .content {
     color: var(--color-neutral);
     text-shadow:
