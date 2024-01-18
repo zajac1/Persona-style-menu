@@ -3,9 +3,9 @@
   { "text": "gear", "subtext": "" },
   { "text": "diary", "subtext": "make ready" },
   { "text": "plan", "subtext": "" },
-  { "text": "system", "subtext": "" },
-  { "text": "skills", "subtext": "" },
+  { "text": "equip", "subtext": "" },
+  { "text": "skill", "subtext": "" },
   { "text": "quest", "subtext": "" },
   { "text": "party", "subtext": "" },
-  { "text": "items", "subtext": "" }
+  { "text": "stats", "subtext": "" }
 ]

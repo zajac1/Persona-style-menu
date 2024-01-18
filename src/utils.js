@@ -12,7 +12,7 @@ export function createBackgroundSvg(svgIndex) {
   </defs>
    
   <g filter="url(#displacement-${svgIndex})">
-    <rect width="50%" height="15%" stroke="#333" stroke-width="2" fill="${colorActive}" />
+    <rect width="50%" height="15%" stroke="#000" stroke-width="3" fill="${colorActive}" />
   </g>
 </svg>`;
   const encodedSvg = encodeURIComponent(svg)

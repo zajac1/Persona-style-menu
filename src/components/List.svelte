@@ -5,21 +5,21 @@
   const CIRLCE_TOTAL_ANGLE = 180; //  Defines the curve length for the menu. Choose between a full circle or a specific portion (defined in degrees).
 
   let listItems = [];
-  let selectedItem;
+  let activeItem;
 
-  const setSelectedItem = (element) => (selectedItem = element);
-  const resetSelectedItem = () => (selectedItem = null);
+  const setActiveItem = (element) => (activeItem = element);
+  const clearActiveItem = () => (activeItem = null);
 
   const onFocus = () => {
     const menuSound = new Audio("/src/assets/menu_item_choice.wav");
     menuSound.volume = 0.4;
     menuSound.play();
   };
-  const onActiveItemChange = ({ target }) => target.focus();
+  const onSelectedItemChange = ({ target }) => target.focus();
 
   const mapKeyToCallback = {
-    Enter: ({ target }) => setSelectedItem(target),
-    Escape: resetSelectedItem,
+    Enter: ({ target }) => setActiveItem(target),
+    Escape: clearActiveItem,
     ArrowDown: ({ target }) => {
       const { currentItemIndex, hasItemBeenFound } = getItemInfo({
         items: listItems,
@@ -28,7 +28,7 @@
       const nextItem = hasItemBeenFound
         ? listItems[(currentItemIndex + 1) % listItems.length]
         : listItems.at(0);
-      onActiveItemChange({ target: nextItem });
+      onSelectedItemChange({ target: nextItem });
     },
     ArrowUp: ({ target }) => {
       const { currentItemIndex, hasItemBeenFound } = getItemInfo({
@@ -40,7 +40,7 @@
             (currentItemIndex - 1 + listItems.length) % listItems.length
           ]
         : listItems.at(-1);
-      onActiveItemChange({ target: previousItem });
+      onSelectedItemChange({ target: previousItem });
     },
   };
 
@@ -56,21 +56,25 @@
     {@const svgDataURI = createBackgroundSvg(svgIndex)}
     {@const degreesPerItem = (CIRLCE_TOTAL_ANGLE / entries.length) * index}
     {@const currentItem = listItems[index]}
+    {@const isCurrentItemActive = currentItem?.isEqualNode(activeItem)}
 
     <li
       bind:this={listItems[index]}
-      class:item={!currentItem?.isEqualNode(selectedItem)}
-      class:item-selected={currentItem?.isEqualNode(selectedItem)}
-      class:item-initial={!isInitialized}
+      class:item={!isCurrentItemActive}
+      class:active={isCurrentItemActive}
+      class:initial={!isInitialized}
       style:--index={index}
       style:--angle="{degreesPerItem}deg"
       data-subtext={subtext}
       tabindex={index}
-      on:click={({ target }) => setSelectedItem(target)}
-      on:mouseover={onActiveItemChange}
+      on:click={isCurrentItemActive ? clearActiveItem : ({ target }) => setActiveItem(target)}
+      on:mouseover={onSelectedItemChange}
       on:focus={onFocus}
     >
-      <div class="item--content">{text}</div>
+      <div class="content">
+        <span>{text}</span>
+        <div class="text-background" />
+      </div>
       <div
         class="item-background"
         style:background-image="url('{svgDataURI}')"
@@ -94,7 +98,6 @@
     margin-left: 20vw;
   }
 
-
   .item {
     --default-horizontal-tilt: calc(
       var(--radius) + (var(--radius) * sin(var(--angle))) * -1
@@ -102,60 +105,89 @@
 
     rotate: y var(--default-rotation);
     translate: 0 0 var(--translation-z-axis);
-    transform: translateX(
-      calc(var(--radius) + (var(--radius) * sin(var(--angle))) * -1)
-    );
+    transform: translateX(var(--default-horizontal-tilt));
     text-align: right;
     line-height: 65%;
     letter-spacing: -4px;
     cursor: pointer;
     color: var(--color-neutral-inverted);
-    transition: all var(--default-easing-function) 0.2s;
+    transition:
+      transform var(--default-easing-function) 0.2s,
+      translate var(--default-easing-function) 0.2s;
     position: relative;
     min-width: 250px;
+
+    &.initial {
+      transform: translateX(calc(var(--default-horizontal-tilt) + 300px));
+    }
+
+    &:focus-visible {
+      outline: none;
+    }
   }
 
-  .item-initial {
+  .item:focus {
+    animation: tiltSelected 4s infinite linear;
+    rotate: y calc(var(--default-rotation) - 1deg);
+    translate: 0 0 calc(var(--translation-z-axis) + 3px);
     transform: translateX(
-      calc(var(--radius) + (var(--radius) * sin(var(--angle))) * -1 + 300px)
+      calc(var(--radius) + (var(--radius) * sin(var(--angle))) * -1)
     );
+    z-index: 1;
   }
 
-  .item-selected {
+  .active {
     rotate: y 0deg;
     translate: -20% calc(var(--index) * -100% + 24px)
       calc(var(--translation-z-axis) + 10px);
     position: relative;
     z-index: 1;
-    animation: tiltSelected 3s infinite linear;
+    animation: tiltActive 3s infinite linear;
     text-align: right;
     line-height: 65%;
     letter-spacing: -4px;
-    transition: all var(--default-easing-function) 0.2s;
+    transition:
+      transform var(--default-easing-function) 0.2s,
+      translate var(--default-easing-function) 0.2s;
     cursor: pointer;
     padding-left: 12px;
+
+    &:focus-visible {
+      outline: none;
+    }
   }
 
-  .menu-list:has(.item-selected) .item:not(.item-selected) {
+  .content {
+    width: min-content;
+    margin-left: auto;
+    pointer-events: none;
+    position: relative;
+    z-index: 1;
+  }
+
+  .text-background {
+    display: none;
+    background-color: var(--color-neutral-inverted);
+    width: 95%;
+    height: 0.5em;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    z-index: -1;
+  }
+
+  .menu-list:has(.active) .item:not(.active) {
     pointer-events: none; /* for a bug where after clicking accidentaly because of animation with hover we could invoke activate item*/
-    transition: all var(--default-easing-function) 2s;
+    transition:
+      transform var(--default-easing-function) 2s,
+      translate var(--default-easing-function) 2s;
     transform: translateX(
       calc(var(--radius) + (var(--radius) * sin(var(--angle))) * -1 - 900px)
     );
   }
 
-  .item:focus-visible {
-    outline: none;
-  }
-
-  .item--content {
-    width: min-content;
-    margin-left: auto;
-    pointer-events: none;
-  }
-
   .item:focus .item-background,
-  .item-selected .item-background {
+  .active .item-background {
     background-repeat: no-repeat;
     background-size: cover;
     width: 215%;
@@ -167,18 +199,13 @@
     pointer-events: none;
   }
 
-  .item:focus {
-    animation: tiltActive 4s infinite linear;
-    rotate: y calc(var(--default-rotation) - 1deg);
-    translate: 0 0 calc(var(--translation-z-axis) + 3px);
-    transform: translateX(
-      calc(var(--radius) + (var(--radius) * sin(var(--angle))) * -1)
-    );
-    z-index: 1;
+  .item:focus .text-background,
+  .active .text-background {
+    display: block;
   }
 
-  .item:focus .item--content,
-  .item-selected .item--content {
+  .item:focus .content,
+  .active .content {
     color: var(--color-neutral);
     text-shadow:
       1px -1px 0 var(--color-neutral-inverted),
@@ -187,11 +214,7 @@
       0 -3px 0 var(--color-neutral-inverted);
   }
 
-  .item-selected:focus-visible {
-    outline: none;
-  }
-
-  @keyframes tiltActive {
+  @keyframes tiltSelected {
     0%,
     100% {
       transform: translateX(calc(var(--default-horizontal-tilt) + 3px))
@@ -209,7 +232,7 @@
     }
   }
 
-  @keyframes tiltSelected {
+  @keyframes tiltActive {
     0%,
     100% {
       transform: translateX(3px) translateY(0);
