@@ -1,11 +1,29 @@
 <script>
+  import FontAwesome from "svelte-fa";
+  import {
+    faVolumeXmark,
+    faVolumeLow,
+    faVolumeHigh,
+  } from "@fortawesome/free-solid-svg-icons";
   const INITIAL_VOLUME_VALUE = 40;
   let audio;
   let volumeValue = 0;
   let hasAudioBeenInitialized = false;
+  let icon;
   $: isAudioMuted = volumeValue === 0;
   $: if (audio) {
     audio.volume = volumeValue / 100;
+  }
+  $: {
+    if (isAudioMuted) {
+      icon = faVolumeXmark;
+    }
+    if (volumeValue > 0 && volumeValue < 70) {
+      icon = faVolumeLow;
+    }
+    if (volumeValue > 70) {
+      icon = faVolumeHigh;
+    }
   }
 
   const toggleSound = () => {
@@ -21,13 +39,9 @@
   <audio bind:this={audio} loop>
     <source src="/src/assets/menu_music.mp3" />
   </audio>
-  <i
-    on:click={toggleSound}
-    class="fa-solid fa-volume-xmark volume-icon"
-    class:fa-volume-xmark={isAudioMuted}
-    class:fa-volume-low={volumeValue > 0 && volumeValue < 70}
-    class:fa-volume-high={volumeValue >= 70}
-  />
+  <button on:click={toggleSound}>
+    <FontAwesome {icon} size="1.25x" />
+  </button>
   <input
     type="range"
     min="0"
@@ -50,22 +64,23 @@
     perspective: var(--perspective-depth);
     perspective-origin: center;
     transition: all cubic-bezier(0.16, 1, 0.3, 1) 0.2s;
+    gap: 4px;
   }
 
-  .audio-panel-wrapper--revelead {
-    right: 12px;
-  }
-  .volume-icon {
-    background-color: transparent;
+  button {
     border-radius: 50%;
-    padding: 12px;
     transition: background-color cubic-bezier(0.16, 1, 0.3, 1) 0.4s;
-    width: 22px;
-  }
+    border: none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    -webkit-appearance: none;
+    aspect-ratio: 1;
 
-  .volume-icon:hover {
-    background-color: oklch(1 0 0 / 0.35);
-    cursor: pointer;
+    &:hover {
+      background-color: oklch(1 0 0 / 0.35);
+      cursor: pointer;
+    }
   }
 
   .volume-slider {
