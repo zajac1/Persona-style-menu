@@ -1,6 +1,7 @@
 <script>
   import AudioPlayer from "./AudioPlayer.svelte";
   import List from "./List.svelte";
+  import Background from "./Background.svelte"
   let isInitialized = false;
   let listElement;
 
@@ -16,5 +17,6 @@
     }
   }}
 />
+<Background />
 <AudioPlayer />
 <List bind:this={listElement} {isInitialized} />

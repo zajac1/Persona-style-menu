@@ -1,6 +1,6 @@
 <script>
-  import entries from "/src/entries.json";
-  import { createBackgroundSvg, getItemInfo } from "/src/utils.js";
+  import entries from "src/entries.json";
+  import { createBackgroundSvg, getItemInfo } from "src/utils.js";
 
   const CIRLCE_TOTAL_ANGLE = 180; //  Defines the curve length for the menu. Choose between a full circle or a specific portion (defined in degrees).
 
