@@ -1,4 +1,6 @@
 <script>
+  import { run } from 'svelte/legacy';
+
   import FontAwesome from "svelte-fa";
   import {
     faVolumeXmark,
@@ -6,15 +8,17 @@
     faVolumeHigh,
   } from "@fortawesome/free-solid-svg-icons";
   const INITIAL_VOLUME_VALUE = 40;
-  let audio;
-  let volumeValue = 0;
+  let audio = $state();
+  let volumeValue = $state(0);
   let hasAudioBeenInitialized = false;
-  let icon;
-  $: isAudioMuted = volumeValue === 0;
-  $: if (audio) {
-    audio.volume = volumeValue / 100;
-  }
-  $: {
+  let icon = $state();
+  let isAudioMuted = $derived(volumeValue === 0);
+  run(() => {
+    if (audio) {
+      audio.volume = volumeValue / 100;
+    }
+  });
+  run(() => {
     if (isAudioMuted) {
       icon = faVolumeXmark;
     }
@@ -24,7 +28,7 @@
     if (volumeValue > 70) {
       icon = faVolumeHigh;
     }
-  }
+  });
 
   const toggleSound = () => {
     volumeValue = isAudioMuted ? INITIAL_VOLUME_VALUE : 0;
@@ -39,7 +43,7 @@
   <audio bind:this={audio} loop>
     <source src="/src/assets/menu_music.mp3" />
   </audio>
-  <button on:click={toggleSound}>
+  <button onclick={toggleSound}>
     <FontAwesome {icon} size="1.25x" />
   </button>
   <input

@@ -4,8 +4,8 @@
 
   const CIRLCE_TOTAL_ANGLE = 180; //  Defines the curve length for the menu. Choose between a full circle or a specific portion (defined in degrees).
 
-  let listItems = [];
-  let activeItem;
+  let listItems = $state([]);
+  let activeItem = $state();
 
   const setActiveItem = (element) => (activeItem = element);
   const clearActiveItem = () => (activeItem = null);
@@ -47,7 +47,7 @@
   export const onKeyPress = ({ code, target }, index) =>
     mapKeyToCallback[code]({ target, index });
   export const ALLOWED_NAVIGATION_KEYS = Object.keys(mapKeyToCallback);
-  export let isInitialized;
+  let { isInitialized } = $props();
 </script>
 
 <ul class="menu-list">
@@ -66,15 +66,15 @@
       style:--angle="{degreesPerItem}deg"
       data-subtext={subtext}
       tabindex={index}
-      on:click={isCurrentItemActive
+      onclick={isCurrentItemActive
         ? clearActiveItem
         : ({ target }) => setActiveItem(target)}
-      on:mouseover={onSelectedItemChange}
-      on:focus={onFocus}
+      onmouseover={onSelectedItemChange}
+      onfocus={onFocus}
     >
       <div class="content">
         <span>{text}</span>
-        <div class="text-background" />
+        <div class="text-background"></div>
       </div>
       <div
         class="item-background"
@@ -177,7 +177,7 @@
     z-index: -1;
   }
 
-  .menu-list:has(.active) li:not(.active) {
+  .menu-list:has(:global(.active)) li:not(.active) {
     pointer-events: none; /* for a bug where after clicking accidentaly because of animation with hover we could invoke activate item*/
     transition:
       transform var(--default-easing-function) 2s,
