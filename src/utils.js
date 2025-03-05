@@ -3,11 +3,11 @@ export function createBackgroundSvg(svgIndex) {
   const colorActive = getComputedStyle(document.documentElement).getPropertyValue(
     "--color-active",
   );
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520">
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-25 0 800 520">
   <defs>
     <filter id="displacement-${svgIndex}" height="200%" width="200%" x="-50%" y="-50%">
       <feTurbulence baseFrequency="0.033" numOctaves="5" result="NOISE" seed="${randomSeed}"/>
-      <feDisplacementMap in="SourceGraphic" in2="NOISE" scale="70" />
+      <feDisplacementMap in="SourceGraphic" in2="NOISE" scale="80" />
     </filter>
   </defs>
    

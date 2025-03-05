@@ -1,6 +1,6 @@
 <script>
   import entries from "src/entries.json";
-  import { createBackgroundSvg, getItemInfo } from "src/utils.js";
+  import { createBackgroundSvg, getItemInfo } from "src/utils";
 
   const CIRLCE_TOTAL_ANGLE = 180; //  Defines the curve length for the menu. Choose between a full circle or a specific portion (defined in degrees).
 
@@ -121,6 +121,11 @@
     translate: 0 0 var(--translation-z-axis);
     transform: translateX(var(--default-horizontal-tilt));
     color: var(--color-neutral-inverted);
+    text-shadow:
+      1px -1px 0 var(--color-black),
+      -3px 1px 0 var(--color-black),
+      3px 3px 0 var(--color-black),
+      0 -3px 0 var(--color-black);
 
     &:not(:focus) {
       transition-delay: calc(var(--index) * var(--default-delay)), 0ms; /* 0 so we won't delay translate animations */
@@ -193,7 +198,7 @@
     background-repeat: no-repeat;
     background-size: cover;
     width: 215%;
-    height: 280%;
+    height: 300%;
     position: absolute;
     left: -5%;
     top: -70%;

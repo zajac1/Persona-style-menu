@@ -11,10 +11,14 @@
 }
 
 :root {
+  --color-black: oklch(0 0 0);
+  --color-white: oklch(1 0 0);
   --color-active: oklch(0.62 0.22 21.44);
   --color-neutral: oklch(0.2 0.04 224.11);
   --color-neutral-inverted: oklch(1 0 0);
   --color-background-transparent: oklch(0 0 0 / 0.25);
+  --color-background-left: oklch(0.63 0.25 30.06);
+  --color-background-right: oklch(0.28 0 0);
   --diameter: 350px;
   --menu-size: 3rem;
   --radius: calc((var(--diameter) - var(--menu-size)) / 2);
@@ -45,4 +49,3 @@ body {
 #app {
   display: flex;
 }
-
